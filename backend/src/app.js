@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { ApiResponse } from "./utils/ApiResponse.js";
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use(
 //import routes
 
 app.get("/", (req, res) => {
-  res.status(200).send("Hi from notes app!");
+  res.status(200).json(new ApiResponse(200, {}, "Hi from notes app!"));
 });
 
 export default app;
