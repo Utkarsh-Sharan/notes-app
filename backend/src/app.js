@@ -20,9 +20,8 @@ app.use(
 );
 
 //import routes
+import notesRoutes from "./routes/notes.routes.js";
 
-app.get("/", (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Hi from notes app!"));
-});
+app.use("/api/v1/notes", notesRoutes);
 
 export default app;
