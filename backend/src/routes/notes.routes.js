@@ -1,24 +1,19 @@
 import express from "express";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import {
+  getAllNotes,
+  createANote,
+  updateANote,
+  deleteANote,
+} from "../controllers/notes.controllers.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Watch all your notes here!"));
-});
+router.get("/", getAllNotes);
 
-router.post("/create-note", (req, res) => {
-  res
-    .status(201)
-    .json(new ApiResponse(201, {}, "New note created successfully!"));
-});
+router.post("/create-note", createANote);
 
-router.put("/update-note/:id", (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Note updated successfully!"));
-});
+router.put("/update-note/:id", updateANote);
 
-router.delete("/delete-note/:id", (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Note deleted successfully!"));
-});
+router.delete("/delete-note/:id", deleteANote);
 
 export default router;
