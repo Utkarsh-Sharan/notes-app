@@ -1,21 +1,78 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { Note } from "../models/note.models.js";
 
-const getAllNotes = async (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Watch all your notes here!"));
-};
+const getAllNotes = asyncHandler(async (req, res) => {
+  const notes = await Note.find().sort({ createdAt: -1 });
 
-const createANote = async (req, res) => {
+  if (!notes) throw new ApiError(404, "Notes not found!");
+
   res
+    .status(200)
+    .json(new ApiResponse(200, { notes }, "Notes fetched successfully!"));
+});
+
+const getANote = asyncHandler(async (req, res) => {
+  const note = await Note.findById(req.params.id);
+
+  if (!note) throw new ApiError(404, "Note not found!");
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { note }, "Note fetched successfully!"));
+});
+
+const createANote = asyncHandler(async (req, res) => {
+  const { title, description } = req.body;
+  const newNote = new Note({ title, description });
+
+  if (!newNote) throw new ApiError(400, "Failed to create note!");
+
+  await newNote.save({ validateBeforeSave: false });
+
+  return res
     .status(201)
-    .json(new ApiResponse(201, {}, "New note created successfully!"));
-};
+    .json(new ApiResponse(201, { newNote }, "Note saved successfully!"));
+});
 
-const updateANote = async (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Note updated successfully!"));
-};
+const updateANote = asyncHandler(async (req, res) => {
+  const { title, description } = req.body;
+  const updatedNote = await Note.findByIdAndUpdate(
+    req.params.id,
+    {
+      title,
+      description,
+    },
+    { new: true },
+  );
 
-const deleteANote = async (req, res) => {
-  res.status(200).json(new ApiResponse(200, {}, "Note deleted successfully!"));
-};
+  if (!updatedNote) throw new ApiError(404, "Note not found!");
 
-export { getAllNotes, createANote, updateANote, deleteANote };
+  res
+    .status(200)
+    .json(new ApiResponse(200, { updatedNote }, "Note updated successfully!"));
+});
+
+const deleteANote = asyncHandler(async (req, res) => {
+  const noteToDelete = await Note.findById(req.params.id);
+  const { title, description } = {
+    title: noteToDelete.title,
+    description: noteToDelete.description,
+  };
+  const deletedNote = await Note.findByIdAndDelete(req.params.id);
+
+  if (!deletedNote) throw new ApiError(404, "Note not found!");
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { title, description },
+        "Note deleted successfully!",
+      ),
+    );
+});
+
+export { getAllNotes, getANote, createANote, updateANote, deleteANote };
