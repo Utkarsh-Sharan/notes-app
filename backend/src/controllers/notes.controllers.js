@@ -4,13 +4,23 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Note } from "../models/note.models.js";
 
 const getAllNotes = asyncHandler(async (req, res) => {
-  const notes = await Note.find();
+  const notes = await Note.find().sort({ createdAt: -1 });
 
   if (!notes) throw new ApiError(404, "Notes not found!");
 
   res
     .status(200)
     .json(new ApiResponse(200, { notes }, "Notes fetched successfully!"));
+});
+
+const getANote = asyncHandler(async (req, res) => {
+  const note = await Note.findById(req.params.id);
+
+  if (!note) throw new ApiError(404, "Note not found!");
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { note }, "Note fetched successfully!"));
 });
 
 const createANote = asyncHandler(async (req, res) => {
@@ -65,4 +75,4 @@ const deleteANote = asyncHandler(async (req, res) => {
     );
 });
 
-export { getAllNotes, createANote, updateANote, deleteANote };
+export { getAllNotes, getANote, createANote, updateANote, deleteANote };
