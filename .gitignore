@@ -10,10 +10,10 @@ backend/.env
 
 # Build output
 dist/
-frontend/dist/
-backend/dist/
 build/
+frontend/dist/
 frontend/build/
+backend/dist/
 backend/build/
 
 # Logs
@@ -24,5 +24,4 @@ backend/build/
 Thumbs.db
 
 # IDE/editor settings
-.vscode/
 .idea/
